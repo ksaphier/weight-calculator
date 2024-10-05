@@ -5,27 +5,37 @@ const peso = ref(0)
 
 const unidad = ref(true)
 
+const multiplicador = ref(1)
+
 const arrayPesos = ref([])
 
 const addPeso = () => {
     arrayPesos.value.push({
         valor: peso.value,
         id: new Date().getTime(),
-        unidad: unidad.value ? 'kg' : 'lb'
+        unidad: unidad.value ? 'kg' : 'lb',
+        multiplicador: multiplicador.value
     })
     peso.value = 0
+    multiplicador.value = 1
 }
+
 
 const pesoTotal = computed(() => {
     return arrayPesos.value.reduce((acc, peso) => {
-        return peso.unidad === 'kg' ? acc + peso.valor : acc + peso.valor * 0.453592
+        const valorConMultiplicador = peso.valor * peso.multiplicador;
+        return peso.unidad === 'kg' ? acc + valorConMultiplicador : acc + valorConMultiplicador * 0.453592
     }, 0)
 })
+
+const toggleMultiplicador = (pesoItem) => {
+    pesoItem.multiplicador = pesoItem.multiplicador === 8 ? 1 : pesoItem.multiplicador + 1;
+}
 </script>
 
 <template>
-    <h1>Weight Calculator</h1>
-    <div style="display: flex;justify-content: space-between;padding: 2.5%;gap: 2.5%;">
+    <h2>Weight Calculator</h2>
+    <div style="display: flex;justify-content: space-between;padding: 0%;gap: 2.5%;">
         <div class="input-wrapper">
             <input type="number" v-model="peso" placeholder="Ingresa el peso!" />
             <button @click="unidad = !unidad">{{ unidad ? 'kg' : 'lb' }}</button>
@@ -34,13 +44,14 @@ const pesoTotal = computed(() => {
             +
         </button>
     </div>
-    <div style="display: flex; justify-content: center;padding: 2.5%;">
+    <div style="display: flex; justify-content: center;padding: 0%;">
         <ul v-if="arrayPesos.length">
-            <li v-for="peso in arrayPesos" :key="peso">
+            <li v-for="peso in arrayPesos" :key="peso.id">
+                <button @click="toggleMultiplicador(peso)">x{{ peso.multiplicador }}</button>
                 <span style="width: 100%;">{{ peso.valor }} {{ peso.unidad }}</span>
                 <button @click="arrayPesos = arrayPesos.filter(p => p.id !== peso.id)">x</button>
             </li>
-            <h2>Peso total {{ Math.round(pesoTotal*100)/100 }} kgs</h2>
+            <h3>Peso total {{ Math.round(pesoTotal*100)/100 }} kgs</h3>
         </ul>
     </div>
 </template>
