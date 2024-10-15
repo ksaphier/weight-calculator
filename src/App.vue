@@ -44,19 +44,27 @@ const toggleMultiplicador = (pesoItem) => {
             +
         </button>
     </div>
-    <div style="display: flex; justify-content: center;padding: 0%;">
+    <div style="display: flex; justify-content: center;padding: 0%; width: 100% !important;">
         <ul v-if="arrayPesos.length">
             <li v-for="peso in arrayPesos" :key="peso.id">
                 <button @click="toggleMultiplicador(peso)">x{{ peso.multiplicador }}</button>
                 <span style="width: 100%;">{{ peso.valor }} {{ peso.unidad }}</span>
                 <button @click="arrayPesos = arrayPesos.filter(p => p.id !== peso.id)">x</button>
             </li>
-            <h3>Peso total {{ Math.round(pesoTotal*100)/100 }} kgs</h3>
+            <h3>Peso total</h3>
+            <h3>
+                {{ Math.round(pesoTotal * 100) / 100 }} kgs |
+                {{ Math.round(pesoTotal * 100 / 0.453592) / 100 }} lbs
+            </h3>
         </ul>
     </div>
 </template>
 
 <style scoped>
+h3 {
+    margin: 0;
+}
+
 button {
     border: none;
     border-radius: 50%;
